@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+	<sftp:config name="SFTP_Config" doc:name="SFTP Config" doc:id="97355be3-e9b4-4fe9-97b6-2e84698c7164" >
+		<sftp:connection workingDir="/" host="127.0.0.1" port="2022" username="test" password="test" />
+	</sftp:config>
+	<flow name="mule4-ai-sftp-testFlow" doc:id="6c4d5d2b-06ef-46e3-ab70-de41583881ea" >
+		<sftp:listener doc:name="On New or Updated File" doc:id="b39f2935-b1ff-4e21-aa9b-1747ca7bc387" config-ref="SFTP_Config" directory="/home/mule/IPt-Test-In/" autoDelete="true">
+			<scheduling-strategy >
+				<fixed-frequency frequency="10" timeUnit="SECONDS" />
+			</scheduling-strategy>
+			<sftp:matcher filenamePattern="*.txt" />
+		</sftp:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="c30a846e-70d2-48ff-9ee5-930810db409a" message="#['Received file ' ++ attributes.name]"/>
+		<sftp:write doc:name="Write" doc:id="dad140b5-8121-45b3-8f29-ad8dd2d6b59f" config-ref="SFTP_Config" path="#['/home/mule/IPt-Test-Out/Test-Out' ++ attributes.name]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="321ae98b-23be-4f88-9c83-4aa11592ebb9" message="#['Finished file processing ' ++ attributes.name]"/>
+	</flow>
+</mule>
